@@ -1,0 +1,256 @@
+name: "Dehaze"
+input: "data"
+input_dim: 1
+input_dim: 3
+input_dim: 16
+input_dim: 16
+
+layer {
+  name: "conv1"
+  type: "Convolution"
+  bottom: "data"
+  top: "conv1"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 0.1
+  }
+  convolution_param {
+    num_output: 20
+    kernel_size: 5
+    stride: 1
+    pad: 0
+    weight_filler {
+      type: "gaussian"
+      std: 0.001
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+
+layer {
+  name: "relu1"
+  type: "ReLU"
+  bottom: "conv1"
+  top: "conv1"
+}
+
+layer {
+    name: "reshape1"
+    type: "Reshape"
+    bottom: "conv1"
+    top: "reshape1"
+    reshape_param {
+      shape {
+        dim: 0
+        dim: 1
+        dim: 20
+        dim: -1
+      }
+    }
+  }
+
+layer {
+  name: "pool1"
+  type: "Pooling"
+  bottom: "reshape1"
+  top: "pool1"
+  pooling_param {
+    pool: MAX
+    kernel_w: 1
+    kernel_h: 5
+    stride_w: 1
+    stride_h: 5
+  }
+}
+
+layer {
+ name: "reshape2"
+ type: "Reshape"
+ bottom: "pool1"
+ top: "reshape2"
+ reshape_param {
+    shape {
+      dim: 0
+      dim: 4
+      dim: 12
+      dim: 12
+    }
+  }
+}
+
+
+
+layer {
+  name: "conv2/1x1"
+  type: "Convolution"
+  bottom: "reshape2"
+  top: "conv2/1x1"
+  param {
+    lr_mult: 0.1
+  }
+  param {
+    lr_mult: 0.1
+  }
+  convolution_param {
+    num_output: 16
+    kernel_size: 1
+    stride: 1
+    pad: 0
+    weight_filler {
+      type: "gaussian"
+      std: 0.001
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+
+layer {
+  name: "conv2/3x3"
+  type: "Convolution"
+  bottom: "reshape2"
+  top: "conv2/3x3"
+  param {
+    lr_mult: 0.1
+  }
+  param {
+    lr_mult: 0.1
+  }
+  convolution_param {
+    num_output: 16
+    kernel_size: 3
+    stride: 1
+    pad: 1
+    weight_filler {
+      type: "gaussian"
+      std: 0.001
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+
+layer {
+  name: "conv2/5x5"
+  type: "Convolution"
+  bottom: "reshape2"
+  top: "conv2/5x5"
+  param {
+    lr_mult: 0.1
+  }
+  param {
+    lr_mult: 0.1
+  }
+  convolution_param {
+    num_output: 16
+    kernel_size: 5
+    stride: 1
+    pad: 2
+    weight_filler {
+      type: "gaussian"
+      std: 0.001
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+
+layer {
+  name: "conv2/7x7"
+  type: "Convolution"
+  bottom: "reshape2"
+  top: "conv2/7x7"
+  param {
+    lr_mult: 0.1
+  }
+  param {
+    lr_mult: 0.1
+  }
+  convolution_param {
+    num_output: 16
+    kernel_size: 7
+    stride: 1
+    pad: 3
+    weight_filler {
+      type: "gaussian"
+      std: 0.001
+    }
+    bias_filler {
+      type: "constant"
+      value: 0
+    }
+  }
+}
+
+layer {
+  name: "conv2/output"
+  type: "Concat"
+  bottom: "conv2/1x1"
+  bottom: "conv2/3x3"
+  bottom: "conv2/5x5"
+  bottom: "conv2/7x7"
+  top: "conv2/output"
+  concat_param 
+ {
+    axis: 1
+  }
+}
+
+layer {
+  name: "relu2"
+  type: "ReLU"
+  bottom: "conv2/output"
+  top: "conv2/output"
+}
+
+layer {
+  name: "pool2"
+  type: "Pooling"
+  bottom: "conv2/output"
+  top: "pool2"
+  pooling_param {
+    pool: MAX
+    kernel_size: 8
+    stride: 1
+  }
+}
+
+layer {
+  name: "ip1"
+  type: "InnerProduct"
+  bottom: "pool2"
+  top: "ip1"
+  param {
+    lr_mult: 1
+  }
+  param {
+    lr_mult: 2
+  }
+  inner_product_param {
+    num_output: 1
+    weight_filler {
+      type: "xavier"
+    }
+    bias_filler {
+      type: "constant"
+    }
+  }
+}
+
+layer {
+  name: "drelu1"
+  type: "ReLU"
+  bottom: "ip1"
+  top: "ip1"
+}
