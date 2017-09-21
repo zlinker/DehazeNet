@@ -20,8 +20,12 @@ python DehazeNet.py image_path
 
 ## Site:
     @article{cai2016dehazenet,
-        author = {Bolun Cai, Xiangmin Xu, Kui Jia, Chunmei Qing and Dacheng Tao},
-        title={DehazeNet: An End-to-End System for Single Image Haze Removal},
-        journal={arXiv preprint arXiv:1601.07661},
-        year={2016}
+     title={Dehazenet: An end-to-end system for single image haze removal},
+     author={Cai, Bolun and Xu, Xiangmin and Jia, Kui and Qing, Chunmei and Tao, Dacheng},
+     journal={IEEE Transactions on Image Processing},
+     volume={25},
+     number={11},
+     pages={5187--5198},
+     year={2016},
+     publisher={IEEE}
     }
